@@ -1,0 +1,157 @@
+From feded0b34458b5fb936df7387a9457e7c6113675 Mon Sep 17 00:00:00 2001
+From: Nattharika Sae Tang <saetang.nattharika@gmail.com>
+Date: Fri, 27 May 2022 18:26:51 +0100
+Subject: [PATCH] Create Patch File
+
+---
+ __pycache__/client3.cpython-39.pyc | Bin 0 -> 1128 bytes
+ client3.py                         |  43 +++++++++++++++--------------
+ client_test.py                     |   7 +++--
+ server3.py                         |   4 +--
+ 4 files changed, 30 insertions(+), 24 deletions(-)
+ create mode 100644 __pycache__/client3.cpython-39.pyc
+
+diff --git a/__pycache__/client3.cpython-39.pyc b/__pycache__/client3.cpython-39.pyc
+new file mode 100644
+index 0000000000000000000000000000000000000000..f08b331e2277ed11def819cf4f3586327b2525dc
+GIT binary patch
+literal 1128
+zcmYjQ&2Aev5GHrItCcOeiQ}INxv&9(RzRFh5fliFv`u0sEeh0d668>##exz?)>^Aw
+znWTbPl~2wK<PGFwU!#XU#9n*Ky{DWyq--N3IDecS&U`Z~+wB#C>yUlu9XAR2*D0Sb
+zw2>!x%s)sJQM4d}dLD?t^H7AIGr?3KA{B~QF%`WhqM>5dK%PKTC8I$94J#0z(|z*C
+zJFyDkq6PH0y;y^2@ddC2yC4_zf-Y`2E^g*Ttiw(8eIRZ@18$wu-<jADn_^3B!#1qL
+z#$y6sswQl}CTzj>fNha;O38^u>k1^Wu2wq)X{$rdgUh?06@5**?T=UsIhcJlw05$a
+zrbX44#jrAV_tAq#-=!y0(5FA<>ia*>^8Y9yeLUAILW$wo!(*NxnIk40az?F_f(}t3
+zzDLgjud{1CoCou8o2ckEIb(C`v^g6v%qE`g@<UyzX&<;O3SJGk9Re=_6e#{y7E>_X
+zR{RJ`(9)t4SJKK!m6w*+k+D^OR5xrj$$Gh}qlwP@u+*g)eGD+gF0G?MQAyj4>gZ%z
+zS<ud0H}QjP>EA@(rKnwXe-XWk?9*QQ#(*|yDXkq!osXoEU}brf?t>ZOo9Xc+{pIl2
+zy&Vhv;f}>9JKye1P9LWIB8SpGygxauTSs8`G2=s*@f{3n{K$m~y@9($bsKGcm(kU7
+zvO6B+4HV{7Q5>L_3SJ}3b9$Q~aN+C@{|PKdQ1Z&b=1a*Wm!-OtdtAHb9r$XxfoNR1
+zTnRmYu_P^YtP{-jm5X-|H4`HtETN3*HGi9BW0{v(Hv9UegHiFjhD*!8K_GYUntL4U
+z_uM~&Qg@d4Xy{jmPoM48;r{a%-HuqB>Y~Vd_ch?K87tzYUNf7IL9k;}l_J(yM>Q7F
+z%Qw$o{Z`WhkJEJ`r5r<+)e(9fK}}J@4l5%XS1}tHvzkCz$Ae0brLCC;sp{AdfDy6J
+z(dYyV^W&i1udZEd{0R6-D(z<gxrxwAlpc?9UJLkP6HSIANvPk9g)B@~aARLN;^ums
+H&@K8uRACz;
+
+literal 0
+HcmV?d00001
+
+diff --git a/client3.py b/client3.py
+index f1771c3..21ea73a 100644
+--- a/client3.py
++++ b/client3.py
+@@ -24,36 +24,39 @@ import json
+ import random
+ 
+ # Server API URLs
+-QUERY = "http://localhost:8080/query?id={}"
++# QUERY = "http://localhost:8080/query?id={}"
++QUERY = "http://localhost:8085/query?id={}"
+ 
+ # 500 server request
+ N = 500
+ 
++
+ def getDataPoint(quote):
+-	""" Produce all of the needed values to generate a datapoint """
+-	""" ------------- Update this function ------------- """
+-	stock = quote['stock']
+-	bid_price = float(quote['top_bid']['price'])
+-	ask_price = float(quote['top_ask']['price'])
+-	price = bid_price
+-	return stock, bid_price, ask_price, price
++    """ Produce all of the needed values to generate a datapoint """
++    """ ------------- Update this function ------------- """
++    stock = quote['stock']
++    bid_price = float(quote['top_bid']['price'])
++    ask_price = float(quote['top_ask']['price'])
++    price = (bid_price+ask_price)/2
++    return stock, bid_price, ask_price, price
++
+ 
+ def getRatio(price_a, price_b):
+-	""" Get ratio of price_a and price_b """
+-	""" ------------- Update this function ------------- """
+-	""" Also create some unit tests for this function in client_test.py """
+-	return 1
++    """ Get ratio of price_a and price_b """
++    """ ------------- Update this function ------------- """
++    """ Also create some unit tests for this function in client_test.py """
++    if price_b == 0:
++        return
++    return price_a/price_b
++
+ 
+ # Main
+ if __name__ == "__main__":
+-
+-	# Query the price once every N seconds.
+-	for _ in iter(range(N)):
++	for _ in range(N):
+ 		quotes = json.loads(urllib.request.urlopen(QUERY.format(random.random())).read())
+-
+-		""" ----------- Update to get the ratio --------------- """
++		prices = {}
+ 		for quote in quotes:
+ 			stock, bid_price, ask_price, price = getDataPoint(quote)
+-			print ("Quoted %s at (bid:%s, ask:%s, price:%s)" % (stock, bid_price, ask_price, price))
+-
+-		print ("Ratio %s" % getRatio(price, price))
++			prices[stock] = price
++			print("Quoted %s at (bid:%s, ask:%s, price:%s)" % (stock, bid_price, ask_price, price))
++		print("Ratio %s" % getRatio(prices['ABC'], prices['DEF']))
+diff --git a/client_test.py b/client_test.py
+index af2bf26..0b68c48 100644
+--- a/client_test.py
++++ b/client_test.py
+@@ -1,6 +1,5 @@
+ import unittest
+-from client3 import getDataPoint
+-
++from client3 import *
+ class ClientTest(unittest.TestCase):
+   def test_getDataPoint_calculatePrice(self):
+     quotes = [
+@@ -8,6 +7,8 @@ class ClientTest(unittest.TestCase):
+       {'top_ask': {'price': 121.68, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 117.87, 'size': 81}, 'id': '0.109974697771', 'stock': 'DEF'}
+     ]
+     """ ------------ Add the assertion below ------------ """
++    for quote in quotes:
++      self.assertEqual(getDataPoint(quote), (quote['stock'], quote['top_bid']['price'], quote['top_ask']['price'], (quote['top_bid']['price']+quote['top_ask']['price'])/2))
+ 
+   def test_getDataPoint_calculatePriceBidGreaterThanAsk(self):
+     quotes = [
+@@ -15,6 +16,8 @@ class ClientTest(unittest.TestCase):
+       {'top_ask': {'price': 121.68, 'size': 4}, 'timestamp': '2019-02-11 22:06:30.572453', 'top_bid': {'price': 117.87, 'size': 81}, 'id': '0.109974697771', 'stock': 'DEF'}
+     ]
+     """ ------------ Add the assertion below ------------ """
++    for quote in quotes:
++      self.assertEqual(getDataPoint(quote), (quote['stock'], quote['top_bid']['price'], quote['top_ask']['price'], (quote['top_bid']['price']+quote['top_ask']['price'])/2))
+ 
+ 
+   """ ------------ Add more unit tests ------------ """
+diff --git a/server3.py b/server3.py
+index 2de4e28..1d59866 100644
+--- a/server3.py
++++ b/server3.py
+@@ -202,7 +202,7 @@ def get(req_handler, routes):
+                 req_handler.wfile.write(bytes(data,  encoding = 'utf-8'))
+                 return
+ 
+-def run(routes, host = '0.0.0.0', port = 8080):
++def run(routes, host = '0.0.0.0', port = 8085):
+     """ Runs a class as a server whose methods have been decorated with
+         @route.
+     """
+@@ -215,7 +215,7 @@ def run(routes, host = '0.0.0.0', port = 8080):
+     thread = threading.Thread(target = server.serve_forever)
+     thread.daemon = True
+     thread.start()
+-    print ('HTTP server started on port 8080')
++    print ('HTTP server started on port 8085')
+     while True:
+         from time import sleep
+         sleep(1)
+-- 
+2.32.1 (Apple Git-133)
+
